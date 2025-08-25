@@ -1,0 +1,908 @@
+<!-- 
+=================================================================
+CHATBOT TƯ VẤN BẢO HIỂM NHÂN THỌ - BAOHIEMNHANTHO.ORG
+=================================================================
+Hướng dẫn: Paste toàn bộ code này vào TRƯỚC thẻ </body> của website
+Chatbot sẽ xuất hiện dưới dạng floating button ở góc dưới bên phải
+=================================================================
+-->
+
+<style>
+/* =================================================================
+   CHATBOT STYLES - OPTIMIZED FOR BAOHIEMNHANTHO.ORG
+   ================================================================= */
+
+/* Chat Widget Button - Phù hợp với màu sắc website */
+.bh-chat-widget-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+    z-index: 9999;
+    color: white;
+    border: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.bh-chat-widget-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+}
+
+.bh-chat-widget-button:active {
+    transform: scale(0.95);
+}
+
+.bh-chat-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Chat Widget Container */
+.bh-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 380px;
+    height: 600px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.bh-chat-widget.open {
+    display: flex;
+}
+
+/* Chat Header - Màu xanh phù hợp với website */
+.bh-chat-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bh-chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bh-chat-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bh-chat-title h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+}
+
+.bh-chat-title p {
+    font-size: 12px;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.bh-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bh-chat-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat Messages Area */
+.bh-chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #f8fafc;
+}
+
+.bh-chat-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.bh-chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bh-chat-messages::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.bh-message {
+    display: flex;
+    gap: 8px;
+    max-width: 85%;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bh-bot-message {
+    align-self: flex-start;
+}
+
+.bh-user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.bh-message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bh-bot-message .bh-message-avatar {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+}
+
+.bh-user-message .bh-message-avatar {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+.bh-message-content {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    line-height: 1.5;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.bh-user-message .bh-message-content {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    border: none;
+}
+
+.bh-message-content p {
+    margin: 0 0 8px 0;
+}
+
+.bh-message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.bh-message-content ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.bh-message-content li {
+    margin-bottom: 4px;
+}
+
+.bh-message-content strong {
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.bh-user-message .bh-message-content strong {
+    color: white;
+}
+
+/* Quick Questions */
+.bh-quick-questions {
+    padding: 12px 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bh-quick-question {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #475569;
+    font-family: inherit;
+}
+
+.bh-quick-question:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+}
+
+/* Chat Input Container */
+.bh-chat-input-container {
+    background: white;
+    border-top: 1px solid #e2e8f0;
+}
+
+.bh-chat-input-wrapper {
+    padding: 16px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bh-chat-input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 12px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.bh-chat-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bh-chat-input::placeholder {
+    color: #9ca3af;
+}
+
+.bh-chat-send {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.bh-chat-send:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.bh-chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Typing Indicator */
+.bh-typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+}
+
+.bh-typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #94a3b8;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.bh-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.bh-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .bh-chat-widget {
+        width: calc(100vw - 20px);
+        height: calc(100vh - 20px);
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        border-radius: 12px;
+    }
+    
+    .bh-chat-widget-button {
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+    }
+    
+    .bh-quick-questions {
+        padding: 8px 16px 0;
+    }
+    
+    .bh-chat-input-wrapper {
+        padding: 12px 16px;
+    }
+}
+
+/* Tablet Responsive */
+@media (max-width: 768px) and (min-width: 481px) {
+    .bh-chat-widget {
+        width: 360px;
+        height: 580px;
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .bh-chat-widget {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Dark Mode Support (if website has dark mode) */
+@media (prefers-color-scheme: dark) {
+    .bh-chat-widget {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .bh-chat-messages {
+        background: #111827;
+    }
+    
+    .bh-message-content {
+        background: #374151;
+        color: #f9fafb;
+        border-color: #4b5563;
+    }
+    
+    .bh-chat-input-container {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .bh-chat-input {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .bh-quick-question {
+        background: #374151;
+        border-color: #4b5563;
+        color: #d1d5db;
+    }
+}
+
+/* Animation for new messages */
+.bh-message.new {
+    animation: newMessage 0.5s ease-out;
+}
+
+@keyframes newMessage {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Focus trap for accessibility */
+.bh-chat-widget:focus-within {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+</style>
+
+<!-- HTML Structure -->
+<div id="bh-chat-widget-button" class="bh-chat-widget-button" role="button" tabindex="0" aria-label="Mở chatbot tư vấn bảo hiểm">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="bh-chat-count" id="bh-chat-count" style="display: none;">1</span>
+</div>
+
+<div id="bh-chat-widget" class="bh-chat-widget" role="dialog" aria-labelledby="bh-chat-title" aria-hidden="true">
+    <div class="bh-chat-header">
+        <div class="bh-chat-header-info">
+            <div class="bh-chat-avatar" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="bh-chat-title">
+                <h3 id="bh-chat-title">Tư Vấn Bảo Hiểm</h3>
+                <p>Trợ lý AI miễn phí • Không bán hàng</p>
+            </div>
+        </div>
+        <button id="bh-chat-close" class="bh-chat-close" aria-label="Đóng chatbot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="bh-chat-messages" id="bh-chat-messages" role="log" aria-live="polite" aria-label="Tin nhắn chat">
+        <div class="bh-message bh-bot-message">
+            <div class="bh-message-avatar" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="bh-message-content">
+                <p><strong>Xin chào!</strong> Tôi là trợ lý tư vấn bảo hiểm nhân thọ miễn phí của baohiemnhantho.org.</p>
+                <p>Tôi có thể giúp bạn:</p>
+                <ul>
+                    <li>Hiểu các khái niệm cơ bản về bảo hiểm nhân thọ</li>
+                    <li>Tính toán nhu cầu bảo hiểm phù hợp với tình hình tài chính</li>
+                    <li>So sánh các loại bảo hiểm một cách khách quan</li>
+                    <li>Giải đáp thắc mắc về quy trình và điều khoản</li>
+                </ul>
+                <p><em>Lưu ý: Tôi chỉ tư vấn, không bán sản phẩm bảo hiểm.</em></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bh-chat-input-container">
+        <div class="bh-quick-questions">
+            <button class="bh-quick-question" data-question="Bảo hiểm nhân thọ là gì?">Bảo hiểm nhân thọ là gì?</button>
+            <button class="bh-quick-question" data-question="Tôi cần mua bảo hiểm bao nhiêu?">Tính nhu cầu bảo hiểm</button>
+            <button class="bh-quick-question" data-question="So sánh các loại bảo hiểm">So sánh loại bảo hiểm</button>
+        </div>
+        <div class="bh-chat-input-wrapper">
+            <input 
+                type="text" 
+                id="bh-chat-input" 
+                class="bh-chat-input" 
+                placeholder="Nhập câu hỏi về bảo hiểm nhân thọ..." 
+                maxlength="500"
+                aria-label="Nhập tin nhắn"
+            >
+            <button id="bh-chat-send" class="bh-chat-send" aria-label="Gửi tin nhắn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polygon points="22,2 15,22 11,13 2,9" fill="currentColor"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Logic -->
+<script>
+(function() {
+    'use strict';
+    
+    // Prevent multiple initialization
+    if (window.BHChatWidget) {
+        return;
+    }
+    
+    class BHChatWidget {
+        constructor() {
+            this.isOpen = false;
+            this.conversationHistory = [];
+            this.apiBaseUrl = 'https://zmhqivcg9gm0.manus.space/api';
+            this.isTyping = false;
+            this.messageCount = 0;
+            
+            this.initializeElements();
+            this.bindEvents();
+            this.setupAccessibility();
+            
+            // Track analytics (optional)
+            this.trackEvent('chatbot_loaded');
+        }
+
+        initializeElements() {
+            this.chatButton = document.getElementById('bh-chat-widget-button');
+            this.chatWidget = document.getElementById('bh-chat-widget');
+            this.chatClose = document.getElementById('bh-chat-close');
+            this.chatMessages = document.getElementById('bh-chat-messages');
+            this.chatInput = document.getElementById('bh-chat-input');
+            this.chatSend = document.getElementById('bh-chat-send');
+            this.quickQuestions = document.querySelectorAll('.bh-quick-question');
+            this.chatCount = document.getElementById('bh-chat-count');
+        }
+
+        bindEvents() {
+            // Main chat controls
+            this.chatButton.addEventListener('click', () => this.toggleChat());
+            this.chatButton.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.toggleChat();
+                }
+            });
+            
+            this.chatClose.addEventListener('click', () => this.closeChat());
+            this.chatSend.addEventListener('click', () => this.sendMessage());
+            
+            // Input handling
+            this.chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+            
+            this.chatInput.addEventListener('input', () => {
+                this.chatSend.disabled = !this.chatInput.value.trim();
+            });
+
+            // Quick questions
+            this.quickQuestions.forEach(button => {
+                button.addEventListener('click', () => {
+                    const question = button.getAttribute('data-question');
+                    this.chatInput.value = question;
+                    this.sendMessage();
+                    this.trackEvent('quick_question_used', { question });
+                });
+            });
+
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (this.isOpen && 
+                    !this.chatWidget.contains(e.target) && 
+                    !this.chatButton.contains(e.target)) {
+                    this.closeChat();
+                }
+            });
+            
+            // Escape key to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isOpen) {
+                    this.closeChat();
+                }
+            });
+        }
+        
+        setupAccessibility() {
+            // Set initial ARIA states
+            this.chatWidget.setAttribute('aria-hidden', 'true');
+            this.chatSend.disabled = true;
+        }
+
+        toggleChat() {
+            if (this.isOpen) {
+                this.closeChat();
+            } else {
+                this.openChat();
+            }
+        }
+
+        openChat() {
+            this.isOpen = true;
+            this.chatWidget.classList.add('open');
+            this.chatWidget.setAttribute('aria-hidden', 'false');
+            this.chatButton.style.display = 'none';
+            
+            // Focus management
+            setTimeout(() => {
+                this.chatInput.focus();
+            }, 300);
+            
+            // Hide notification count
+            if (this.chatCount) {
+                this.chatCount.style.display = 'none';
+            }
+            
+            this.trackEvent('chat_opened');
+        }
+
+        closeChat() {
+            this.isOpen = false;
+            this.chatWidget.classList.remove('open');
+            this.chatWidget.setAttribute('aria-hidden', 'true');
+            this.chatButton.style.display = 'flex';
+            
+            // Return focus to chat button
+            this.chatButton.focus();
+            
+            this.trackEvent('chat_closed');
+        }
+
+        async sendMessage() {
+            const message = this.chatInput.value.trim();
+            if (!message || this.isTyping) return;
+
+            // Disable input during processing
+            this.setInputState(false);
+            this.isTyping = true;
+
+            // Add user message
+            this.addMessage(message, 'user');
+            this.chatInput.value = '';
+            this.messageCount++;
+
+            // Show typing indicator
+            this.showTypingIndicator();
+
+            try {
+                // Call API
+                const response = await this.callChatAPI(message);
+                
+                // Remove typing indicator
+                this.hideTypingIndicator();
+                
+                // Add bot response
+                this.addMessage(response.response, 'bot');
+                
+                // Update conversation history
+                this.conversationHistory.push(
+                    { role: 'user', content: message },
+                    { role: 'bot', content: response.response }
+                );
+                
+                this.trackEvent('message_sent', { 
+                    message_count: this.messageCount,
+                    response_time: response.timestamp 
+                });
+
+            } catch (error) {
+                console.error('Chat API Error:', error);
+                this.hideTypingIndicator();
+                this.addMessage('Xin lỗi, có lỗi xảy ra khi kết nối với server. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.', 'bot');
+                this.trackEvent('api_error', { error: error.message });
+            } finally {
+                // Re-enable input
+                this.setInputState(true);
+                this.isTyping = false;
+                this.chatInput.focus();
+            }
+        }
+        
+        setInputState(enabled) {
+            this.chatInput.disabled = !enabled;
+            this.chatSend.disabled = !enabled || !this.chatInput.value.trim();
+        }
+
+        async callChatAPI(message) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+            
+            try {
+                const response = await fetch(`${this.apiBaseUrl}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: this.conversationHistory.slice(-10) // Keep last 10 messages
+                    }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timeout');
+                }
+                throw error;
+            }
+        }
+
+        addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `bh-message bh-${sender}-message new`;
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'bh-message-avatar';
+            avatarDiv.setAttribute('aria-hidden', 'true');
+            avatarDiv.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'bh-message-content';
+            
+            // Format content with enhanced markdown support
+            const formattedContent = this.formatMessage(content);
+            contentDiv.innerHTML = formattedContent;
+            
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentDiv);
+            
+            this.chatMessages.appendChild(messageDiv);
+            this.scrollToBottom();
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                messageDiv.classList.remove('new');
+            }, 500);
+        }
+
+        formatMessage(content) {
+            // Enhanced markdown formatting with safety
+            return content
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/^(.*)$/g, '<p>$1</p>')
+                .replace(/• (.*?)(<br>|<\/p>)/g, '<li>$1</li>')
+                .replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>')
+                .replace(/<\/ul>\s*<ul>/g, '')
+                .replace(/<p><\/p>/g, '');
+        }
+
+        showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'bh-message bh-bot-message bh-typing-message';
+            typingDiv.innerHTML = `
+                <div class="bh-message-avatar" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="bh-message-content">
+                    <div class="bh-typing-indicator" aria-label="Đang nhập...">
+                        <div class="bh-typing-dot"></div>
+                        <div class="bh-typing-dot"></div>
+                        <div class="bh-typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            this.chatMessages.appendChild(typingDiv);
+            this.scrollToBottom();
+        }
+
+        hideTypingIndicator() {
+            const typingMessage = this.chatMessages.querySelector('.bh-typing-message');
+            if (typingMessage) {
+                typingMessage.remove();
+            }
+        }
+
+        scrollToBottom() {
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }
+        
+        trackEvent(eventName, data = {}) {
+            // Optional analytics tracking
+            if (typeof gtag !== 'undefined') {
+                gtag('event', eventName, {
+                    event_category: 'chatbot',
+                    ...data
+                });
+            }
+            
+            // Console log for debugging (remove in production)
+            console.log('Chatbot Event:', eventName, data);
+        }
+    }
+
+    // Initialize when DOM is ready
+    function initializeChatbot() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                window.BHChatWidget = new BHChatWidget();
+            });
+        } else {
+            window.BHChatWidget = new BHChatWidget();
+        }
+    }
+    
+    initializeChatbot();
+})();
+</script>
+
+<!-- 
+=================================================================
+END OF CHATBOT CODE
+=================================================================
+Chatbot đã được tối ưu hóa cho website baohiemnhantho.org với:
+- Màu sắc phù hợp (xanh dương)
+- Responsive design
+- Accessibility support
+- Error handling
+- Analytics tracking
+- Performance optimization
+=================================================================
+-->
+

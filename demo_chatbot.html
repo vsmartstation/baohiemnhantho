@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Chatbot Tư Vấn Bảo Hiểm Nhân Thọ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .demo-container {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .demo-header {
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .demo-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .demo-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .demo-instructions {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .demo-instructions h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .demo-instructions p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .chat-indicator {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #4f46e5;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: bounce 2s infinite;
+            z-index: 999;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .demo-footer {
+            margin-top: 3rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-header p {
+                font-size: 1.1rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .chat-indicator {
+                bottom: 120px;
+                right: 20px;
+                font-size: 0.9rem;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🤖 Chatbot Tư Vấn Bảo Hiểm</h1>
+            <p>Trợ lý AI miễn phí giúp bạn hiểu rõ về bảo hiểm nhân thọ và đưa ra tư vấn khách quan, không bán hàng</p>
+        </div>
+
+        <div class="demo-features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Tư Vấn Cá Nhân Hóa</h3>
+                <p>Phân tích nhu cầu dựa trên tình hình tài chính và gia đình của bạn. Đưa ra lời khuyên phù hợp với từng độ tuổi và thu nhập.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Kiến Thức Minh Bạch</h3>
+                <p>Giải thích các khái niệm bảo hiểm một cách dễ hiểu và khách quan. So sánh các loại sản phẩm một cách trung thực.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Hoàn Toàn Miễn Phí</h3>
+                <p>Không bán hàng, không thu phí. Chỉ tập trung vào việc giáo dục và tư vấn về bảo hiểm nhân thọ.</p>
+            </div>
+        </div>
+
+        <div class="demo-instructions">
+            <h2>🚀 Hướng Dẫn Sử Dụng</h2>
+            <p>
+                <strong>Bước 1:</strong> Click vào biểu tượng chat ở góc dưới bên phải<br>
+                <strong>Bước 2:</strong> Chọn một trong các câu hỏi gợi ý hoặc nhập câu hỏi của bạn<br>
+                <strong>Bước 3:</strong> Trò chuyện tự nhiên với chatbot để nhận tư vấn chi tiết
+            </p>
+        </div>
+
+        <div class="demo-footer">
+            <p>💡 <strong>Gợi ý:</strong> Hãy thử hỏi "Tôi 30 tuổi, thu nhập 20 triệu/tháng, nên mua bảo hiểm gì?" để xem tư vấn cá nhân hóa</p>
+        </div>
+    </div>
+
+    <!-- Chat Indicator -->
+    <div class="chat-indicator">
+        👆 Click để chat!
+    </div>
+
+    <!-- Embed Chatbot Code -->
+    <style>
+/* Chat Widget Button */
+.insurance-chat-widget-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s ease;
+    z-index: 9999;
+    color: white;
+    border: none;
+}
+
+.insurance-chat-widget-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4);
+}
+
+.insurance-chat-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Chat Widget */
+.insurance-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 380px;
+    height: 600px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.insurance-chat-widget.open {
+    display: flex;
+}
+
+/* Chat Header */
+.insurance-chat-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.insurance-chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.insurance-chat-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.insurance-chat-title h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+}
+
+.insurance-chat-title p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.insurance-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.insurance-chat-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat Messages */
+.insurance-chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #f8fafc;
+}
+
+.insurance-chat-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.insurance-chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.insurance-chat-messages::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.insurance-message {
+    display: flex;
+    gap: 8px;
+    max-width: 85%;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.insurance-bot-message {
+    align-self: flex-start;
+}
+
+.insurance-user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.insurance-message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.insurance-bot-message .insurance-message-avatar {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+}
+
+.insurance-user-message .insurance-message-avatar {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+.insurance-message-content {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    line-height: 1.5;
+}
+
+.insurance-user-message .insurance-message-content {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+}
+
+.insurance-message-content p {
+    margin: 0 0 8px 0;
+}
+
+.insurance-message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.insurance-message-content ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.insurance-message-content li {
+    margin-bottom: 4px;
+}
+
+.insurance-message-content strong {
+    font-weight: 600;
+}
+
+/* Quick Questions */
+.insurance-quick-questions {
+    padding: 12px 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.insurance-quick-question {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #475569;
+}
+
+.insurance-quick-question:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+/* Chat Input */
+.insurance-chat-input-container {
+    background: white;
+    border-top: 1px solid #e2e8f0;
+}
+
+.insurance-chat-input-wrapper {
+    padding: 16px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.insurance-chat-input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 12px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.insurance-chat-input:focus {
+    border-color: #4f46e5;
+}
+
+.insurance-chat-send {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.insurance-chat-send:hover {
+    transform: scale(1.05);
+}
+
+.insurance-chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Typing Indicator */
+.insurance-typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+}
+
+.insurance-typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #94a3b8;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.insurance-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.insurance-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .insurance-chat-widget {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 40px);
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+    }
+    
+    .insurance-chat-widget-button {
+        bottom: 30px;
+        right: 30px;
+    }
+}
+    </style>
+
+    <!-- HTML cho chatbot -->
+    <div id="insurance-chat-widget-button" class="insurance-chat-widget-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="insurance-chat-count" id="insurance-chat-count" style="display: none;">1</span>
+    </div>
+
+    <div id="insurance-chat-widget" class="insurance-chat-widget">
+        <div class="insurance-chat-header">
+            <div class="insurance-chat-header-info">
+                <div class="insurance-chat-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="insurance-chat-title">
+                    <h3>Tư Vấn Bảo Hiểm</h3>
+                    <p>Trợ lý AI miễn phí</p>
+                </div>
+            </div>
+            <button id="insurance-chat-close" class="insurance-chat-close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="insurance-chat-messages" id="insurance-chat-messages">
+            <div class="insurance-message insurance-bot-message">
+                <div class="insurance-message-avatar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="insurance-message-content">
+                    <p>Xin chào! Tôi là trợ lý tư vấn bảo hiểm nhân thọ miễn phí. Tôi có thể giúp bạn:</p>
+                    <ul>
+                        <li>Hiểu các khái niệm cơ bản về bảo hiểm nhân thọ</li>
+                        <li>Tính toán nhu cầu bảo hiểm phù hợp</li>
+                        <li>So sánh các loại bảo hiểm khác nhau</li>
+                        <li>Giải đáp thắc mắc về quy trình và điều khoản</li>
+                    </ul>
+                    <p>Bạn muốn tìm hiểu về điều gì?</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="insurance-chat-input-container">
+            <div class="insurance-quick-questions">
+                <button class="insurance-quick-question" data-question="Bảo hiểm nhân thọ là gì?">Bảo hiểm nhân thọ là gì?</button>
+                <button class="insurance-quick-question" data-question="Tôi cần mua bảo hiểm bao nhiêu?">Tính nhu cầu bảo hiểm</button>
+                <button class="insurance-quick-question" data-question="So sánh các loại bảo hiểm">So sánh loại bảo hiểm</button>
+            </div>
+            <div class="insurance-chat-input-wrapper">
+                <input type="text" id="insurance-chat-input" class="insurance-chat-input" placeholder="Nhập câu hỏi của bạn..." maxlength="500">
+                <button id="insurance-chat-send" class="insurance-chat-send">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polygon points="22,2 15,22 11,13 2,9" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript cho chatbot -->
+    <script>
+    (function() {
+        'use strict';
+        
+        class InsuranceChatWidget {
+            constructor() {
+                this.isOpen = false;
+                this.conversationHistory = [];
+                this.apiBaseUrl = 'https://zmhqivcg9gm0.manus.space/api';
+                
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                this.chatButton = document.getElementById('insurance-chat-widget-button');
+                this.chatWidget = document.getElementById('insurance-chat-widget');
+                this.chatClose = document.getElementById('insurance-chat-close');
+                this.chatMessages = document.getElementById('insurance-chat-messages');
+                this.chatInput = document.getElementById('insurance-chat-input');
+                this.chatSend = document.getElementById('insurance-chat-send');
+                this.quickQuestions = document.querySelectorAll('.insurance-quick-question');
+            }
+
+            bindEvents() {
+                this.chatButton.addEventListener('click', () => this.toggleChat());
+                this.chatClose.addEventListener('click', () => this.closeChat());
+                this.chatSend.addEventListener('click', () => this.sendMessage());
+                this.chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage();
+                    }
+                });
+
+                // Quick questions
+                this.quickQuestions.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const question = button.getAttribute('data-question');
+                        this.chatInput.value = question;
+                        this.sendMessage();
+                    });
+                });
+
+                // Close chat when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (this.isOpen && 
+                        !this.chatWidget.contains(e.target) && 
+                        !this.chatButton.contains(e.target)) {
+                        this.closeChat();
+                    }
+                });
+            }
+
+            toggleChat() {
+                if (this.isOpen) {
+                    this.closeChat();
+                } else {
+                    this.openChat();
+                }
+            }
+
+            openChat() {
+                this.isOpen = true;
+                this.chatWidget.classList.add('open');
+                this.chatButton.style.display = 'none';
+                this.chatInput.focus();
+                
+                // Hide chat indicator
+                const indicator = document.querySelector('.chat-indicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+            }
+
+            closeChat() {
+                this.isOpen = false;
+                this.chatWidget.classList.remove('open');
+                this.chatButton.style.display = 'flex';
+                
+                // Show chat indicator again
+                const indicator = document.querySelector('.chat-indicator');
+                if (indicator) {
+                    indicator.style.display = 'block';
+                }
+            }
+
+            async sendMessage() {
+                const message = this.chatInput.value.trim();
+                if (!message) return;
+
+                // Disable input
+                this.chatInput.disabled = true;
+                this.chatSend.disabled = true;
+
+                // Add user message
+                this.addMessage(message, 'user');
+                this.chatInput.value = '';
+
+                // Show typing indicator
+                this.showTypingIndicator();
+
+                try {
+                    // Send to API
+                    const response = await this.callChatAPI(message);
+                    
+                    // Remove typing indicator
+                    this.hideTypingIndicator();
+                    
+                    // Add bot response
+                    this.addMessage(response.response, 'bot');
+                    
+                    // Update conversation history
+                    this.conversationHistory.push(
+                        { role: 'user', content: message },
+                        { role: 'bot', content: response.response }
+                    );
+
+                } catch (error) {
+                    console.error('Chat API Error:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.', 'bot');
+                } finally {
+                    // Re-enable input
+                    this.chatInput.disabled = false;
+                    this.chatSend.disabled = false;
+                    this.chatInput.focus();
+                }
+            }
+
+            async callChatAPI(message) {
+                try {
+                    const response = await fetch(`${this.apiBaseUrl}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            history: this.conversationHistory
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.warn('API not available, using mock response:', error);
+                    return this.getMockResponse(message);
+                }
+            }
+
+            getMockResponse(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                if (lowerMessage.includes('xin chào') || lowerMessage.includes('hello')) {
+                    return {
+                        response: `Xin chào! Tôi là trợ lý tư vấn bảo hiểm nhân thọ miễn phí. Tôi có thể giúp bạn:
+
+• Hiểu các khái niệm cơ bản về bảo hiểm nhân thọ
+• Tính toán nhu cầu bảo hiểm phù hợp
+• So sánh các loại bảo hiểm khác nhau
+• Giải đáp thắc mắc về quy trình và điều khoản
+
+Bạn muốn tìm hiểu về điều gì?`
+                    };
+                }
+                
+                if (lowerMessage.includes('bảo hiểm nhân thọ là gì')) {
+                    return {
+                        response: `**Bảo hiểm nhân thọ:**
+
+Bảo hiểm nhân thọ là hợp đồng giữa bạn và công ty bảo hiểm, trong đó công ty cam kết chi trả một khoản tiền cho người thụ hưởng khi bạn qua đời hoặc khi hợp đồng đáo hạn.
+
+**Mục đích chính:**
+• Bảo vệ tài chính cho gia đình khi bạn không còn
+• Đảm bảo cuộc sống của người thân không bị ảnh hưởng
+• Có thể kết hợp với tích lũy và đầu tư
+
+Bạn có muốn tìm hiểu thêm về các loại bảo hiểm nhân thọ không?`
+                    };
+                }
+                
+                return {
+                    response: `Tôi chưa hiểu rõ câu hỏi của bạn. Bạn có thể hỏi tôi về:
+
+• **Khái niệm cơ bản:** "Bảo hiểm nhân thọ là gì?"
+• **Tính toán nhu cầu:** "Tôi cần mua bảo hiểm bao nhiêu?"
+• **So sánh sản phẩm:** "Loại bảo hiểm nào phù hợp với tôi?"
+
+Hoặc bạn có thể đặt câu hỏi cụ thể khác về bảo hiểm nhân thọ!`
+                };
+            }
+
+            addMessage(content, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `insurance-message insurance-${sender}-message`;
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'insurance-message-avatar';
+                avatarDiv.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                `;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'insurance-message-content';
+                
+                // Format content with basic markdown support
+                const formattedContent = this.formatMessage(content);
+                contentDiv.innerHTML = formattedContent;
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                this.chatMessages.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+
+            formatMessage(content) {
+                // Basic markdown formatting
+                return content
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/^(.*)$/g, '<p>$1</p>')
+                    .replace(/• (.*?)(<br>|$)/g, '<li>$1</li>')
+                    .replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>')
+                    .replace(/<\/ul><ul>/g, '');
+            }
+
+            showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'insurance-message insurance-bot-message insurance-typing-message';
+                typingDiv.innerHTML = `
+                    <div class="insurance-message-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="insurance-message-content">
+                        <div class="insurance-typing-indicator">
+                            <div class="insurance-typing-dot"></div>
+                            <div class="insurance-typing-dot"></div>
+                            <div class="insurance-typing-dot"></div>
+                        </div>
+                    </div>
+                `;
+                
+                this.chatMessages.appendChild(typingDiv);
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                const typingMessage = this.chatMessages.querySelector('.insurance-typing-message');
+                if (typingMessage) {
+                    typingMessage.remove();
+                }
+            }
+
+            scrollToBottom() {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }
+
+        // Initialize chat widget when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new InsuranceChatWidget();
+            });
+        } else {
+            new InsuranceChatWidget();
+        }
+    })();
+    </script>
+</body>
+</html>
+

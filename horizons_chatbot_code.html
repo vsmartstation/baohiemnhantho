@@ -1,0 +1,271 @@
+<!-- CHATBOT TƯ VẤN BẢO HIỂM NHÂN THỌ - BAOHIEMNHANTHO.ORG -->
+<!-- Paste code này vào Custom Code/HTML trong Hostinger Horizons -->
+
+<style>
+.bh-chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    z-index: 9999;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.bh-chat-button:hover {
+    transform: scale(1.1);
+}
+
+.bh-chat-widget {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 380px;
+    height: 500px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bh-chat-widget.open { display: flex; }
+
+.bh-chat-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bh-chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8fafc;
+}
+
+.bh-message {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    max-width: 85%;
+}
+
+.bh-bot-message {
+    background: white;
+    border: 1px solid #e2e8f0;
+    margin-right: auto;
+}
+
+.bh-user-message {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    margin-left: auto;
+}
+
+.bh-chat-input-area {
+    padding: 16px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 8px;
+}
+
+.bh-chat-input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 12px 16px;
+    outline: none;
+}
+
+.bh-chat-send {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+}
+
+.bh-quick-questions {
+    padding: 12px 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bh-quick-question {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bh-quick-question:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+@media (max-width: 480px) {
+    .bh-chat-widget {
+        width: calc(100vw - 20px);
+        height: calc(100vh - 20px);
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+    }
+}
+</style>
+
+<div id="bh-chat-button" class="bh-chat-button">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2"/>
+    </svg>
+</div>
+
+<div id="bh-chat-widget" class="bh-chat-widget">
+    <div class="bh-chat-header">
+        <div>
+            <h3 style="margin: 0; font-size: 16px;">Tư Vấn Bảo Hiểm</h3>
+            <p style="margin: 0; font-size: 12px; opacity: 0.9;">Trợ lý AI miễn phí • Không bán hàng</p>
+        </div>
+        <button id="bh-chat-close" style="background: none; border: none; color: white; cursor: pointer; padding: 8px;">✕</button>
+    </div>
+
+    <div id="bh-chat-messages" class="bh-chat-messages">
+        <div class="bh-message bh-bot-message">
+            <p><strong>Xin chào!</strong> Tôi là trợ lý tư vấn bảo hiểm nhân thọ miễn phí.</p>
+            <p>Tôi có thể giúp bạn hiểu về bảo hiểm, tính toán nhu cầu và so sánh các loại bảo hiểm một cách khách quan.</p>
+            <p><em>Lưu ý: Tôi chỉ tư vấn, không bán sản phẩm.</em></p>
+        </div>
+    </div>
+
+    <div class="bh-quick-questions">
+        <button class="bh-quick-question" onclick="bhSendMessage('Bảo hiểm nhân thọ là gì?')">Bảo hiểm nhân thọ là gì?</button>
+        <button class="bh-quick-question" onclick="bhSendMessage('Tôi cần mua bảo hiểm bao nhiêu?')">Tính nhu cầu bảo hiểm</button>
+        <button class="bh-quick-question" onclick="bhSendMessage('So sánh các loại bảo hiểm')">So sánh loại bảo hiểm</button>
+    </div>
+
+    <div class="bh-chat-input-area">
+        <input type="text" id="bh-chat-input" class="bh-chat-input" placeholder="Nhập câu hỏi về bảo hiểm...">
+        <button id="bh-chat-send" class="bh-chat-send">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+// Chatbot JavaScript
+(function() {
+    const chatButton = document.getElementById('bh-chat-button');
+    const chatWidget = document.getElementById('bh-chat-widget');
+    const chatClose = document.getElementById('bh-chat-close');
+    const chatMessages = document.getElementById('bh-chat-messages');
+    const chatInput = document.getElementById('bh-chat-input');
+    const chatSend = document.getElementById('bh-chat-send');
+    
+    let isOpen = false;
+    const apiUrl = 'https://zmhqivcg9gm0.manus.space/api/chat';
+
+    // Toggle chat
+    function toggleChat() {
+        isOpen = !isOpen;
+        chatWidget.classList.toggle('open', isOpen);
+    }
+
+    // Add message to chat
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `bh-message ${isUser ? 'bh-user-message' : 'bh-bot-message'}`;
+        messageDiv.innerHTML = `<p>${text}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send message to API
+    async function sendMessage(message) {
+        if (!message.trim()) return;
+        
+        addMessage(message, true);
+        chatInput.value = '';
+        
+        // Show typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'bh-message bh-bot-message';
+        typingDiv.innerHTML = '<p><em>Đang trả lời...</em></p>';
+        typingDiv.id = 'typing-indicator';
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            });
+            
+            const data = await response.json();
+            
+            // Remove typing indicator
+            document.getElementById('typing-indicator')?.remove();
+            
+            if (data.response) {
+                addMessage(data.response.replace(/\n/g, '<br>'));
+            } else {
+                addMessage('Xin lỗi, tôi không thể trả lời lúc này. Vui lòng thử lại sau.');
+            }
+        } catch (error) {
+            document.getElementById('typing-indicator')?.remove();
+            addMessage('Xin lỗi, có lỗi kết nối. Vui lòng thử lại sau.');
+        }
+    }
+
+    // Global function for quick questions
+    window.bhSendMessage = sendMessage;
+
+    // Event listeners
+    chatButton.addEventListener('click', toggleChat);
+    chatClose.addEventListener('click', toggleChat);
+    
+    chatSend.addEventListener('click', () => {
+        sendMessage(chatInput.value);
+    });
+    
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage(chatInput.value);
+        }
+    });
+    
+    // Close chat when clicking outside
+    document.addEventListener('click', (e) => {
+        if (isOpen && !chatWidget.contains(e.target) && !chatButton.contains(e.target)) {
+            toggleChat();
+        }
+    });
+})();
+</script>
+

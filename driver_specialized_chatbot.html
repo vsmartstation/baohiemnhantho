@@ -1,0 +1,665 @@
+<!-- CHATBOT CHUYÊN BIỆT CHO TÀI XẾ CÔNG NGHỆ -->
+<!-- 3-TIER AI: DeepSeek → Anthropic → Gemini -->
+<!-- TRACKING & DATA COLLECTION FOR DRIVERS -->
+
+<style>
+/* Enhanced styling for driver-focused chatbot */
+.bh-chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4);
+    z-index: 9999;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4); }
+    50% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.8); }
+    100% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4); }
+}
+
+.bh-chat-button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+}
+
+.bh-chat-widget {
+    position: fixed;
+    bottom: 95px;
+    right: 20px;
+    width: 400px;
+    height: 550px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border: 3px solid #ff6b35;
+}
+
+.bh-chat-widget.open { display: flex; }
+
+.bh-chat-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bh-chat-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.bh-chat-header p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.bh-chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.bh-message {
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bh-bot-message {
+    text-align: left;
+}
+
+.bh-bot-message p {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 18px 18px 18px 4px;
+    margin: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #ff6b35;
+}
+
+.bh-user-message {
+    text-align: right;
+}
+
+.bh-user-message p {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    margin: 0;
+    display: inline-block;
+    max-width: 80%;
+}
+
+.bh-quick-questions {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bh-quick-question {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 120px;
+}
+
+.bh-quick-question:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.bh-chat-input-area {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.bh-chat-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.bh-chat-input:focus {
+    border-color: #ff6b35;
+}
+
+.bh-chat-send {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.bh-chat-send:hover {
+    transform: scale(1.1);
+}
+
+.bh-typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 18px 18px 18px 4px;
+    border-left: 4px solid #ff6b35;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bh-typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #ff6b35;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.bh-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.bh-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+.bh-driver-badge {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+    .bh-chat-widget {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 140px);
+        bottom: 95px;
+        right: 20px;
+        left: 20px;
+    }
+}
+</style>
+
+<!-- HTML Structure -->
+<div id="bh-chat-button" class="bh-chat-button">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 10h8M8 14h4" stroke="currentColor" stroke-width="2"/>
+    </svg>
+</div>
+
+<div id="bh-chat-widget" class="bh-chat-widget">
+    <div class="bh-chat-header">
+        <div>
+            <h3>Tư Vấn Bảo Hiểm Tài Xế <span class="bh-driver-badge">CHUYÊN BIỆT</span></h3>
+            <p>AI miễn phí • Không bán hàng • Hiểu tài xế</p>
+        </div>
+        <button id="bh-chat-close" style="background: none; border: none; color: white; cursor: pointer; padding: 8px; font-size: 18px;">✕</button>
+    </div>
+
+    <div id="bh-chat-messages" class="bh-chat-messages">
+        <div class="bh-message bh-bot-message">
+            <p><strong>Xin chào anh/chị tài xế!</strong> 🏍️</p>
+            <p>Tôi là trợ lý AI chuyên tư vấn bảo hiểm cho <strong>tài xế công nghệ</strong> (Grab, Be, Gojek...).</p>
+            <p>Tôi hiểu những rủi ro và khó khăn của anh chị khi chạy xe kiếm sống hàng ngày.</p>
+            <p><em>🎯 Chỉ tư vấn, không bán hàng. Hoàn toàn miễn phí!</em></p>
+        </div>
+    </div>
+
+    <div class="bh-quick-questions">
+        <button class="bh-quick-question" onclick="bhSendMessage('Bảo hiểm tai nạn cho tài xế Grab')">🚨 Bảo hiểm tai nạn</button>
+        <button class="bh-quick-question" onclick="bhSendMessage('Bảo hiểm y tế khi không có BHXH')">🏥 Bảo hiểm y tế</button>
+        <button class="bh-quick-question" onclick="bhSendMessage('Bảo hiểm thu nhập khi ốm đau')">💰 Bảo hiểm thu nhập</button>
+        <button class="bh-quick-question" onclick="bhSendMessage('So sánh các gói bảo hiểm cho tài xế')">📊 So sánh gói BH</button>
+    </div>
+
+    <div class="bh-chat-input-area">
+        <input type="text" id="bh-chat-input" class="bh-chat-input" placeholder="Hỏi về bảo hiểm cho tài xế...">
+        <button id="bh-chat-send" class="bh-chat-send">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+// DRIVER-SPECIALIZED CHATBOT WITH 3-TIER AI SYSTEM
+(function() {
+    // DOM Elements
+    const chatButton = document.getElementById('bh-chat-button');
+    const chatWidget = document.getElementById('bh-chat-widget');
+    const chatClose = document.getElementById('bh-chat-close');
+    const chatMessages = document.getElementById('bh-chat-messages');
+    const chatInput = document.getElementById('bh-chat-input');
+    const chatSend = document.getElementById('bh-chat-send');
+    
+    // State Management
+    let isOpen = false;
+    let conversationCount = 0;
+    let driverProfile = JSON.parse(localStorage.getItem('driver_profile') || '{}');
+    let conversationHistory = [];
+    let frustrationLevel = 0;
+    
+    // API Configuration - 3-Tier System
+    const APIs = {
+        deepseek: {
+            key: 'sk-bd5f9415d5af4666a74b881485528474',
+            url: 'https://api.deepseek.com/v1/chat/completions'
+        },
+        anthropic: {
+            key: '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',
+            url: 'https://api.anthropic.com/v1/messages'
+        },
+        gemini: {
+            key: 'AIzaSyBxBc7GR97K2Ycu_PHq-JwxVZkX051BZdU',
+            url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+        }
+    };
+
+    // Driver Detection & Classification
+    const driverKeywords = [
+        'grab', 'gojek', 'be', 'tài xế', 'chạy xe', 'xe ôm', 'shipper', 
+        'delivery', 'giao hàng', 'chạy grab', 'lái xe', 'kiếm tiền',
+        'uber', 'fastgo', 'vato', 'now', 'baemin', 'shopee food'
+    ];
+
+    const frustrationKeywords = [
+        'bực', 'tức', 'không hiểu', 'phức tạp', 'khó hiểu', 'rối', 
+        'chán', 'thôi', 'mệt', 'khó quá', 'không rõ', 'lằng nhằng'
+    ];
+
+    // Specialized Driver Prompts
+    const driverSystemPrompt = `Bạn là chuyên gia tư vấn bảo hiểm chuyên biệt cho TÀI XẾ CÔNG NGHỆ (Grab, Be, Gojek...).
+
+HIỂU BIẾT VỀ TÀI XẾ:
+- Thu nhập 8-15 triệu/tháng, không ổn định
+- Rủi ro tai nạn cao gấp 3 lần người bình thường  
+- Thường không có BHXH, BHYT
+- Là trụ cột gia đình, áp lực kinh tế cao
+- Làm việc 10-14h/ngày, stress cao
+
+NGUYÊN TẮC TƯ VẤN:
+1. KHÔNG BÁN HÀNG - chỉ tư vấn khách quan
+2. Hiểu hoàn cảnh khó khăn của tài xế
+3. Đưa ra lời khuyên thực tế, phù hợp túi tiền
+4. Ưu tiên bảo hiểm tai nạn và y tế
+5. Giải thích đơn giản, dễ hiểu
+6. Tính toán cụ thể chi phí vs lợi ích
+
+LUÔN GHI NHỚ thông tin người dùng đã cung cấp trong cuộc trò chuyện.
+DẪN DẮT cuộc trò chuyện: Thu thập thông tin → Phân tích → Tư vấn cụ thể.`;
+
+    // Utility Functions
+    function detectDriver(message) {
+        return driverKeywords.some(keyword => 
+            message.toLowerCase().includes(keyword)
+        );
+    }
+
+    function detectFrustration(message) {
+        const hasFrustrationWords = frustrationKeywords.some(keyword => 
+            message.toLowerCase().includes(keyword)
+        );
+        
+        if (hasFrustrationWords) {
+            frustrationLevel++;
+        }
+        
+        return hasFrustrationWords || frustrationLevel >= 2;
+    }
+
+    function shouldUseAdvancedAI() {
+        return conversationCount >= 5 || frustrationLevel >= 2 || 
+               conversationHistory.some(msg => msg.includes('không hiểu') || msg.includes('phức tạp'));
+    }
+
+    // Chat Functions
+    function toggleChat() {
+        isOpen = !isOpen;
+        chatWidget.classList.toggle('open', isOpen);
+        
+        if (isOpen) {
+            chatInput.focus();
+            trackEvent('chat_opened', { driver_detected: Object.keys(driverProfile).length > 0 });
+        }
+    }
+
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `bh-message ${isUser ? 'bh-user-message' : 'bh-bot-message'}`;
+        messageDiv.innerHTML = `<p>${text}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'bh-message bh-bot-message';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="bh-typing-indicator">
+                <div class="bh-typing-dot"></div>
+                <div class="bh-typing-dot"></div>
+                <div class="bh-typing-dot"></div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Progressive Data Collection
+    function collectDriverData(message) {
+        // Detect platform
+        if (message.includes('grab')) driverProfile.platform = 'grab';
+        else if (message.includes('be')) driverProfile.platform = 'be';
+        else if (message.includes('gojek')) driverProfile.platform = 'gojek';
+        
+        // Detect vehicle type
+        if (message.includes('xe máy') || message.includes('motor')) driverProfile.vehicle = 'xe_may';
+        else if (message.includes('ô tô') || message.includes('car')) driverProfile.vehicle = 'oto';
+        
+        // Save profile
+        localStorage.setItem('driver_profile', JSON.stringify(driverProfile));
+        
+        // Track insights
+        trackDriverInsights();
+    }
+
+    function askProgressiveQuestions() {
+        if (conversationCount === 3 && !driverProfile.age_range) {
+            setTimeout(() => {
+                addMessage("Để tư vấn chính xác hơn, anh/chị thuộc độ tuổi nào? (20-30, 30-40, 40-50, 50+)");
+            }, 1000);
+        }
+        
+        if (conversationCount === 5 && !driverProfile.family_status) {
+            setTimeout(() => {
+                addMessage("Anh/chị đang độc thân hay đã có gia đình? (để tư vấn mức bảo hiểm phù hợp)");
+            }, 1000);
+        }
+        
+        if (conversationCount === 7 && !driverProfile.income_range) {
+            setTimeout(() => {
+                addMessage("Thu nhập trung bình của anh/chị khoảng bao nhiêu/tháng? (8-12tr, 12-15tr, 15tr+) - để tính gói bảo hiểm phù hợp");
+            }, 1000);
+        }
+    }
+
+    // API Calls - 3-Tier System
+    async function callDeepSeekAPI(message, context) {
+        const response = await fetch(APIs.deepseek.url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${APIs.deepseek.key}`
+            },
+            body: JSON.stringify({
+                model: 'deepseek-chat',
+                messages: [
+                    { role: 'system', content: driverSystemPrompt },
+                    { role: 'user', content: `${context}\n\nCâu hỏi: ${message}` }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000
+            })
+        });
+        
+        const data = await response.json();
+        return data.choices?.[0]?.message?.content;
+    }
+
+    async function callAnthropicAPI(message, context) {
+        const response = await fetch(APIs.anthropic.url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${APIs.anthropic.key}`,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: 'claude-3-sonnet-20240229',
+                max_tokens: 1000,
+                messages: [
+                    { 
+                        role: 'user', 
+                        content: `${driverSystemPrompt}\n\nNgười dùng có vẻ bực mình hoặc không hiểu. Hãy trả lời THẬT KIÊN NHẪN, DỄ HIỂU và THẤU CẢM.\n\nContext: ${context}\n\nCâu hỏi: ${message}` 
+                    }
+                ]
+            })
+        });
+        
+        const data = await response.json();
+        return data.content?.[0]?.text;
+    }
+
+    async function callGeminiAPI(message, context) {
+        const response = await fetch(`${APIs.gemini.url}?key=${APIs.gemini.key}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `${driverSystemPrompt}\n\nContext: ${context}\n\nCâu hỏi: ${message}`
+                    }]
+                }]
+            })
+        });
+        
+        const data = await response.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text;
+    }
+
+    // Main Send Message Function
+    async function sendMessage(message) {
+        if (!message.trim()) return;
+        
+        // Add user message
+        addMessage(message, true);
+        chatInput.value = '';
+        conversationCount++;
+        conversationHistory.push(message);
+        
+        // Collect driver data
+        if (detectDriver(message)) {
+            collectDriverData(message);
+        }
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        try {
+            // Build context
+            const context = `
+Thông tin tài xế: ${JSON.stringify(driverProfile)}
+Lịch sử trò chuyện: ${conversationHistory.slice(-3).join(' | ')}
+Số lượt hỏi: ${conversationCount}
+            `;
+            
+            let response;
+            
+            // Choose AI tier based on situation
+            if (detectFrustration(message) || shouldUseAdvancedAI()) {
+                console.log('Using Anthropic for complex/frustrated user');
+                response = await callAnthropicAPI(message, context);
+                trackEvent('ai_tier_used', { tier: 'anthropic', reason: 'frustration_or_complex' });
+            } else {
+                try {
+                    response = await callDeepSeekAPI(message, context);
+                    trackEvent('ai_tier_used', { tier: 'deepseek', reason: 'normal' });
+                } catch (error) {
+                    console.log('DeepSeek failed, falling back to Gemini');
+                    response = await callGeminiAPI(message, context);
+                    trackEvent('ai_tier_used', { tier: 'gemini', reason: 'deepseek_fallback' });
+                }
+            }
+            
+            // Remove typing indicator
+            document.getElementById('typing-indicator')?.remove();
+            
+            if (response) {
+                addMessage(response.replace(/\n/g, '<br>'));
+                
+                // Ask progressive questions
+                askProgressiveQuestions();
+                
+                // Track successful interaction
+                trackEvent('message_success', {
+                    conversation_count: conversationCount,
+                    driver_profile_completeness: Object.keys(driverProfile).length
+                });
+            } else {
+                addMessage('Xin lỗi anh/chị, tôi không thể trả lời lúc này. Vui lòng thử lại sau hoặc hỏi câu khác.');
+            }
+            
+        } catch (error) {
+            document.getElementById('typing-indicator')?.remove();
+            addMessage('Xin lỗi, có lỗi kết nối. Anh/chị thử hỏi lại sau nhé!');
+            console.error('API Error:', error);
+            
+            trackEvent('message_error', { error: error.message });
+        }
+    }
+
+    // Analytics & Tracking
+    function trackEvent(eventName, data) {
+        // Google Analytics 4
+        if (typeof gtag !== 'undefined') {
+            gtag('event', eventName, {
+                custom_parameter_1: data.tier || 'unknown',
+                custom_parameter_2: data.conversation_count || 0,
+                custom_parameter_3: data.driver_profile_completeness || 0,
+                custom_parameter_4: data.reason || 'unknown'
+            });
+        }
+        
+        // Console log for debugging
+        console.log('Event tracked:', eventName, data);
+        
+        // Store in localStorage for analysis
+        const events = JSON.parse(localStorage.getItem('bh_events') || '[]');
+        events.push({
+            event: eventName,
+            data: data,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('bh_events', JSON.stringify(events.slice(-50))); // Keep last 50 events
+    }
+
+    function trackDriverInsights() {
+        const insights = {
+            platform: driverProfile.platform,
+            vehicle: driverProfile.vehicle,
+            age_range: driverProfile.age_range,
+            family_status: driverProfile.family_status,
+            income_range: driverProfile.income_range,
+            conversation_count: conversationCount,
+            session_duration: Date.now() - sessionStart
+        };
+        
+        trackEvent('driver_insights', insights);
+    }
+
+    // Global function for quick questions
+    window.bhSendMessage = sendMessage;
+
+    // Event Listeners
+    chatButton.addEventListener('click', toggleChat);
+    chatClose.addEventListener('click', toggleChat);
+    
+    chatSend.addEventListener('click', () => {
+        sendMessage(chatInput.value);
+    });
+    
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage(chatInput.value);
+        }
+    });
+    
+    // Close chat when clicking outside
+    document.addEventListener('click', (e) => {
+        if (isOpen && !chatWidget.contains(e.target) && !chatButton.contains(e.target)) {
+            toggleChat();
+        }
+    });
+
+    // Session tracking
+    const sessionStart = Date.now();
+    
+    // Initialize
+    console.log('Driver-specialized chatbot initialized');
+    trackEvent('chatbot_loaded', { 
+        existing_profile: Object.keys(driverProfile).length > 0,
+        timestamp: new Date().toISOString()
+    });
+})();
+</script>
+
+<!-- Google Analytics 4 Integration (Optional) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID'); // Replace with your GA4 ID
+</script>
+
